@@ -19,8 +19,14 @@ export class Cube implements RenderObject {
       this.positionBuffer,
     );
     const positions = new Float32Array([
-      -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, 1, 1, 1,
-      -1, 1, 1,
+     -1, -1,  1,  // 0: front-bottom-left
+      1, -1,  1,  // 1: front-bottom-right
+      1,  1,  1,  // 2: front-top-right
+     -1,  1,  1,  // 3: front-top-left
+     -1, -1, -1,  // 4: back-bottom-left
+      1, -1, -1,  // 5: back-bottom-right
+      1,  1, -1,  // 6: back-top-right
+     -1,  1, -1,  // 7: back-top-left
     ]);
     this.context.gl.bufferData(
       this.context.gl.ARRAY_BUFFER,
@@ -48,12 +54,24 @@ export class Cube implements RenderObject {
 
     this.indicesBuffer = this.context.gl.createBuffer();
     const indices = new Uint16Array([
-      0, 1, 2, 2, 3, 0,   // back
-      4, 5, 6, 6, 7, 4,   // front
-      0, 4, 7, 7, 3, 0,   // left
-      1, 5, 6, 6, 2, 1,   // right
-      3, 2, 6, 6, 7, 3,   // top
-      0, 1, 5, 5, 4, 0    // bottom
+      // Front face
+      0, 1, 2,
+      0, 2, 3,
+      // Back face
+      4, 6, 5,
+      4, 7, 6,
+      // Top face
+      3, 2, 6,
+      3, 6, 7,
+      // Bottom face
+      0, 5, 1,
+      0, 4, 5,
+      // Right face
+      1, 5, 6,
+      1, 6, 2,
+      // Left face
+      0, 3, 7,
+      0, 7, 4,
     ]);
     this.context.gl.bindBuffer(this.context.gl.ELEMENT_ARRAY_BUFFER, this.indicesBuffer);
     this.context.gl.bufferData(
@@ -70,8 +88,6 @@ export class Cube implements RenderObject {
   translate(x: number, y: number, z: number): void {
     mat4.translate(this.modelMatrix, this.modelMatrix, vec3.fromValues(x, y, z));
   }
-
-  update(): void {}
 
   render(_: number, viewMatrix: mat4): void {
     const modelViewMatrix = mat4.create();

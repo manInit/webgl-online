@@ -5,11 +5,12 @@ import { World } from './environment/world';
 
 export function startApp(context: WebGLContext, world: World): void {
   const projectionMatrix = createProjectionMatrix(context);
-  const camera = new Camera();
-  const viewMatrix = camera.getViewMatrix();
+  const camera = new Camera(true);
 
   context.gl.useProgram(context.program);
   context.gl.enable(context.gl.DEPTH_TEST);
+  context.gl.enable(context.gl.CULL_FACE);
+  context.gl.cullFace(context.gl.BACK);
 
   let start: number;
   function render(timestamp: number) {
@@ -32,9 +33,13 @@ export function startApp(context: WebGLContext, world: World): void {
       false,
       projectionMatrix,
     );
+
+    camera.checkUpdate();
+    const viewMatrix = camera.getViewMatrix();
+    world.render(deltaTime, viewMatrix);
+
     // @TODO fix rotate. Create and move to update method
     world.getObjects()[0].rotate(0.01, 0.1, 0.1, 0.2);
-    world.render(deltaTime, viewMatrix);
 
     start = timestamp;
     requestAnimationFrame(render);
