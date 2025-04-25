@@ -1,4 +1,4 @@
 export interface Shaders {
-  vertexShader: WebGLShader;
-  fragmentShader: WebGLShader;
+  readonly vertexShader: WebGLShader;
+  readonly fragmentShader: WebGLShader;
 }

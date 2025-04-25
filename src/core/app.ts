@@ -5,7 +5,7 @@ import { World } from './environment/world';
 
 export function startApp(context: WebGLContext, world: World): void {
   const projectionMatrix = createProjectionMatrix(context);
-  const camera = new Camera(context, true);
+  const camera = new Camera(context, true, false);
 
   context.gl.useProgram(context.program);
   context.gl.enable(context.gl.DEPTH_TEST);
@@ -37,9 +37,6 @@ export function startApp(context: WebGLContext, world: World): void {
     camera.checkUpdate();
     const viewMatrix = camera.getViewMatrix();
     world.render(deltaTime, viewMatrix);
-
-    // @TODO fix rotate. Create and move to update method
-    // world.getObjects()[0].rotate(0.01, 0.1, 0.1, 0.2);
 
     start = timestamp;
     requestAnimationFrame(render);

@@ -1,10 +1,7 @@
 import { mat4 } from 'gl-matrix';
 import { WebGLContext } from './context/webgl-context.interface';
 import { gradToRad } from './utils/grad-to-rad';
-
-const FOV = 45;
-const NEAR = 0.1;
-const FAR = 100;
+import { FAR, FOV, NEAR } from './config';
 
 export function createProjectionMatrix(context: WebGLContext): mat4 {
   const projectionMatrix = mat4.create();

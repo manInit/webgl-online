@@ -1,9 +1,9 @@
 export interface WebGLContext {
-  canvasElement: HTMLCanvasElement;
-  gl: WebGLRenderingContext;
-  program: WebGLProgram;
-  colorAttributeLocation: number;
-  positionAttributeLocation: number;
-  uModelViewMatrixLocation: WebGLUniformLocation;
-  uProjectionMatrixLocation: WebGLUniformLocation;
+  readonly canvasElement: HTMLCanvasElement;
+  readonly gl: WebGLRenderingContext;
+  readonly program: WebGLProgram;
+  readonly colorAttributeLocation: number;
+  readonly positionAttributeLocation: number;
+  readonly uModelViewMatrixLocation: WebGLUniformLocation;
+  readonly uProjectionMatrixLocation: WebGLUniformLocation;
 }

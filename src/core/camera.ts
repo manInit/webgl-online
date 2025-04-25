@@ -1,14 +1,19 @@
 import { mat4, vec3 } from 'gl-matrix';
 import { gradToRad } from './utils/grad-to-rad';
 import { WebGLContext } from './context/webgl-context.interface';
-
-const SPEED_MOVE = 0.1;
-const MOUSE_SENSITIVITY = 0.1;
+import {
+  KEY_BACKWARD,
+  KEY_FORWARD,
+  KEY_LEFT,
+  KEY_RIGHT,
+  MOUSE_SENSITIVITY,
+  SPEED_MOVE,
+} from './config';
 
 export class Camera {
   private readonly viewMatrix = mat4.create();
 
-  private position = vec3.fromValues(0, 0, 0);
+  private position = vec3.fromValues(0, 1.73, 0);
   private pointToLook = vec3.fromValues(0, 0, -1);
   private up = vec3.fromValues(0, 1, 0);
 
@@ -17,7 +22,11 @@ export class Camera {
 
   private pressedKeys = new Set();
 
-  constructor(context: WebGLContext, withControls: boolean) {
+  constructor(
+    context: WebGLContext,
+    withControls: boolean,
+    private readonly freeMode: boolean,
+  ) {
     if (withControls) {
       document.addEventListener('keydown', (e) => this.pressedKeys.add(e.code));
       document.addEventListener('keyup', (e) =>
@@ -49,10 +58,19 @@ export class Camera {
   }
 
   moveForwardOrBackward(back = false): void {
+    let moveDirection: vec3;
+    if (!this.freeMode) {
+      moveDirection = vec3.clone(this.pointToLook);
+      moveDirection[1] = 0;
+      vec3.normalize(moveDirection, moveDirection);
+    } else {
+      moveDirection = this.pointToLook;
+    }
+
     vec3.scaleAndAdd(
       this.position,
       this.position,
-      this.pointToLook,
+      moveDirection,
       back ? -SPEED_MOVE : SPEED_MOVE,
     );
   }
@@ -71,16 +89,16 @@ export class Camera {
   }
 
   checkUpdate(): void {
-    if (this.pressedKeys.has('KeyD')) {
+    if (this.pressedKeys.has(KEY_RIGHT)) {
       this.moveRightOrLeft(false);
     }
-    if (this.pressedKeys.has('KeyA')) {
+    if (this.pressedKeys.has(KEY_LEFT)) {
       this.moveRightOrLeft(true);
     }
-    if (this.pressedKeys.has('KeyW')) {
+    if (this.pressedKeys.has(KEY_FORWARD)) {
       this.moveForwardOrBackward(false);
     }
-    if (this.pressedKeys.has('KeyS')) {
+    if (this.pressedKeys.has(KEY_BACKWARD)) {
       this.moveForwardOrBackward(true);
     }
   }

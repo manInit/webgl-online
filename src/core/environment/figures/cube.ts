@@ -2,9 +2,12 @@
 import { mat4, vec3 } from 'gl-matrix';
 import { WebGLContext } from '../../context/webgl-context.interface';
 import { RenderObject } from '../render-object.interface';
+import { gradToRad } from '../../utils/grad-to-rad';
 
 export class Cube implements RenderObject {
   private readonly modelMatrix = mat4.create();
+
+  private readonly center = vec3.create();
 
   private readonly positionBuffer: WebGLBuffer;
 
@@ -12,22 +15,36 @@ export class Cube implements RenderObject {
 
   private readonly indicesBuffer: WebGLBuffer;
 
-  constructor(private readonly context: WebGLContext) {
+  constructor(
+    private readonly context: WebGLContext,
+    readonly startPosition: vec3,
+    private readonly size: vec3,
+    private readonly color: vec3,
+  ) {
     this.positionBuffer = this.context.gl.createBuffer();
     this.context.gl.bindBuffer(
       this.context.gl.ARRAY_BUFFER,
       this.positionBuffer,
     );
+
+    const [halfWidth, halfHeight, halfDepth] = [
+      this.size[0] / 2,
+      this.size[1] / 2,
+      this.size[2] / 2
+    ];
     const positions = new Float32Array([
-     -1, -1,  1,  // 0: front-bottom-left
-      1, -1,  1,  // 1: front-bottom-right
-      1,  1,  1,  // 2: front-top-right
-     -1,  1,  1,  // 3: front-top-left
-     -1, -1, -1,  // 4: back-bottom-left
-      1, -1, -1,  // 5: back-bottom-right
-      1,  1, -1,  // 6: back-top-right
-     -1,  1, -1,  // 7: back-top-left
+     -halfWidth, -halfHeight,  halfDepth,
+     halfWidth, -halfHeight,  halfDepth,
+     halfWidth,  halfHeight,  halfDepth,
+     -halfWidth,  halfHeight,  halfDepth,
+     -halfWidth, -halfHeight, -halfDepth,
+     halfWidth, -halfHeight, -halfDepth,
+     halfWidth,  halfHeight, -halfDepth,
+     -halfWidth,  halfHeight, -halfDepth,
     ]);
+    mat4.translate(this.modelMatrix, this.modelMatrix, this.startPosition);
+    vec3.copy(this.center, this.startPosition);
+
     this.context.gl.bufferData(
       this.context.gl.ARRAY_BUFFER,
       positions,
@@ -37,14 +54,14 @@ export class Cube implements RenderObject {
     this.colorBuffer = this.context.gl.createBuffer();
     this.context.gl.bindBuffer(this.context.gl.ARRAY_BUFFER, this.colorBuffer);
     const colors = new Float32Array([
-      1, 0, 0, // red
-      0, 1, 0, // green
-      0, 0, 1, // blue
-      1, 1, 0, // yellow
-      1, 0, 1, // magenta
-      0, 1, 1, // cyan
-      1, 1, 1, // white
-      0, 0, 0  // black
+      ...this.color,
+      ...this.color,
+      ...this.color,
+      ...this.color,
+      ...this.color,
+      ...this.color,
+      ...this.color,
+      ...this.color,
     ]);
     this.context.gl.bufferData(
       this.context.gl.ARRAY_BUFFER,
@@ -82,7 +99,8 @@ export class Cube implements RenderObject {
   }
 
   rotate(angle: number, x: number, y: number, z: number): void {
-    mat4.rotate(this.modelMatrix, this.modelMatrix, angle, vec3.fromValues(x, y, z));
+    const rad = gradToRad(angle);
+    mat4.rotate(this.modelMatrix, this.modelMatrix, rad, vec3.normalize(vec3.create(), [x, y, z]));
   }
 
   translate(x: number, y: number, z: number): void {
