@@ -1,7 +1,9 @@
 import { mat4, vec3 } from 'gl-matrix';
 import { gradToRad } from './utils/grad-to-rad';
+import { WebGLContext } from './context/webgl-context.interface';
 
 const SPEED_MOVE = 0.1;
+const MOUSE_SENSITIVITY = 0.1;
 
 export class Camera {
   private readonly viewMatrix = mat4.create();
@@ -15,12 +17,25 @@ export class Camera {
 
   private pressedKeys = new Set();
 
-  constructor(withControls: boolean) {
+  constructor(context: WebGLContext, withControls: boolean) {
     if (withControls) {
       document.addEventListener('keydown', (e) => this.pressedKeys.add(e.code));
       document.addEventListener('keyup', (e) =>
         this.pressedKeys.delete(e.code),
       );
+
+      context.canvasElement.addEventListener('click', () => {
+        context.canvasElement.requestPointerLock();
+      });
+      document.addEventListener('mousemove', (e) => {
+        if (document.pointerLockElement !== context.canvasElement) {
+          return;
+        }
+
+        const dx = e.movementX;
+        const dy = e.movementY;
+        this.rotate(dx * MOUSE_SENSITIVITY, -dy * MOUSE_SENSITIVITY);
+      });
     }
   }
 
@@ -31,7 +46,6 @@ export class Camera {
     this.pointToLook[0] = Math.cos(verticalAngle) * Math.cos(horizontalAngle);
     this.pointToLook[1] = Math.sin(verticalAngle);
     this.pointToLook[2] = Math.cos(verticalAngle) * Math.sin(horizontalAngle);
-    vec3.normalize(this.pointToLook, this.pointToLook);
   }
 
   moveForwardOrBackward(back = false): void {
