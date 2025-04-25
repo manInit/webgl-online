@@ -1,8 +1,14 @@
 import { mat4 } from 'gl-matrix';
 import { RenderObject } from './render-object.interface';
+import { CollisionShape } from '../collision/collision-shape.interface';
 
 export class World implements RenderObject {
   constructor(private objects: RenderObject[]) {}
+
+  getCollision(): CollisionShape | undefined {
+    // world don't have collision itself
+    return;
+  }
 
   getObjects(): RenderObject[] {
     return this.objects;

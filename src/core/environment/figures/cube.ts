@@ -3,11 +3,10 @@ import { mat4, vec3 } from 'gl-matrix';
 import { WebGLContext } from '../../context/webgl-context.interface';
 import { RenderObject } from '../render-object.interface';
 import { gradToRad } from '../../utils/grad-to-rad';
+import { CollisionShape } from '../../collision/collision-shape.interface';
 
 export class Cube implements RenderObject {
   private readonly modelMatrix = mat4.create();
-
-  private readonly center = vec3.create();
 
   private readonly positionBuffer: WebGLBuffer;
 
@@ -43,7 +42,6 @@ export class Cube implements RenderObject {
      -halfWidth,  halfHeight, -halfDepth,
     ]);
     mat4.translate(this.modelMatrix, this.modelMatrix, this.startPosition);
-    vec3.copy(this.center, this.startPosition);
 
     this.context.gl.bufferData(
       this.context.gl.ARRAY_BUFFER,
@@ -98,13 +96,47 @@ export class Cube implements RenderObject {
     );
   }
 
+  getCollision(): CollisionShape | undefined {
+    const [w, h, d] = [this.size[0] / 2, this.size[1] / 2, this.size[2] / 2];
+    const localVertices = [
+      vec3.fromValues(-w, -h, -d),
+      vec3.fromValues(-w, -h,  d),
+      vec3.fromValues(-w,  h, -d),
+      vec3.fromValues(-w,  h,  d),
+      vec3.fromValues( w, -h, -d),
+      vec3.fromValues( w, -h,  d),
+      vec3.fromValues( w,  h, -d),
+      vec3.fromValues( w,  h,  d),
+    ];
+
+    const worldVertices = localVertices.map(v => {
+      const out = vec3.create();
+      vec3.transformMat4(out, v, this.modelMatrix);
+      return out;
+    });
+
+    const xs = worldVertices.map(v => v[0]);
+    const ys = worldVertices.map(v => v[1]);
+    const zs = worldVertices.map(v => v[2]);
+
+    return {
+      minX: Math.min(...xs),
+      maxX: Math.max(...xs),
+      minY: Math.min(...ys),
+      maxY: Math.max(...ys),
+      minZ: Math.min(...zs),
+      maxZ: Math.max(...zs),
+    } satisfies CollisionShape
+  }
+
   rotate(angle: number, x: number, y: number, z: number): void {
     const rad = gradToRad(angle);
     mat4.rotate(this.modelMatrix, this.modelMatrix, rad, vec3.normalize(vec3.create(), [x, y, z]));
   }
 
   translate(x: number, y: number, z: number): void {
-    mat4.translate(this.modelMatrix, this.modelMatrix, vec3.fromValues(x, y, z));
+    const newCenter = vec3.fromValues(x, y, z);
+    mat4.translate(this.modelMatrix, this.modelMatrix, newCenter);
   }
 
   render(_: number, viewMatrix: mat4): void {

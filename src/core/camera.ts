@@ -9,18 +9,28 @@ import {
   MOUSE_SENSITIVITY,
   SPEED_MOVE,
 } from './config';
+import { CollisionShape } from './collision/collision-shape.interface';
 
 export class Camera {
   private readonly viewMatrix = mat4.create();
 
-  private position = vec3.fromValues(0, 1.73, 0);
-  private pointToLook = vec3.fromValues(0, 0, -1);
-  private up = vec3.fromValues(0, 1, 0);
+  private readonly position = vec3.fromValues(0, 1.73, 0);
+  private readonly pointToLook = vec3.fromValues(0, 0, -1);
+  private readonly up = vec3.fromValues(0, 1, 0);
+  private readonly collisionShapeSize = vec3.fromValues(0.5, 0.5, 0.5);
 
   private horizontalAngle = -90;
   private verticalAngle = 0;
 
-  private pressedKeys = new Set();
+  private readonly pressedKeys = new Set();
+
+  get currentPosition(): vec3 {
+    return this.position;
+  }
+
+  set currentPosition(position: vec3) {
+    vec3.copy(this.position, position);
+  }
 
   constructor(
     context: WebGLContext,
@@ -55,6 +65,17 @@ export class Camera {
     this.pointToLook[0] = Math.cos(verticalAngle) * Math.cos(horizontalAngle);
     this.pointToLook[1] = Math.sin(verticalAngle);
     this.pointToLook[2] = Math.cos(verticalAngle) * Math.sin(horizontalAngle);
+  }
+
+  getCollisionShape(): CollisionShape {
+    return {
+      minX: this.position[0] - this.collisionShapeSize[0] / 2,
+      maxX: this.position[0] + this.collisionShapeSize[0] / 2,
+      minY: this.position[1] - this.collisionShapeSize[1] / 2,
+      maxY: this.position[1] + this.collisionShapeSize[1] / 2,
+      minZ: this.position[2] - this.collisionShapeSize[2] / 2,
+      maxZ: this.position[2] + this.collisionShapeSize[2] / 2,
+    } satisfies CollisionShape;
   }
 
   moveForwardOrBackward(back = false): void {

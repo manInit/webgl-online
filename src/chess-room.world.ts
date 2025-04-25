@@ -66,7 +66,7 @@ export function createChessWorld(context: WebGLContext): World {
 
   const blueCube = new Cube(
     context,
-    vec3.fromValues(1, 2, -3),
+    vec3.fromValues(0, 2, -1),
     vec3.fromValues(1, 1, 1),
     vec3.fromValues(0, 0, 0.67),
   );

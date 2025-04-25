@@ -1,4 +1,6 @@
+import { vec3 } from 'gl-matrix';
 import { Camera } from './camera';
+import { checkCollision } from './collision/check-collision';
 import { WebGLContext } from './context/webgl-context.interface';
 import { createProjectionMatrix } from './create-projection-matrix';
 import { World } from './environment/world';
@@ -34,7 +36,16 @@ export function startApp(context: WebGLContext, world: World): void {
       projectionMatrix,
     );
 
+    const prevCameraPosition = vec3.clone(camera.currentPosition);
     camera.checkUpdate();
+    const isCollide = checkCollision(
+      camera.getCollisionShape(),
+      world.getObjects(),
+    );
+    if (isCollide) {
+      camera.currentPosition = prevCameraPosition;
+    }
+
     const viewMatrix = camera.getViewMatrix();
     world.render(deltaTime, viewMatrix);
 
