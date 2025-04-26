@@ -130,7 +130,7 @@ export class TextObject implements RenderObject {
     return;
   }
 
-  render(deltaTime: number, viewMatrix: mat4): void {
+  render(_: number, viewMatrix: mat4): void {
     this.context.gl.uniform1i(this.context.uUseTextureLocation, 1);
     this.context.gl.bindTexture(
       this.context.gl.TEXTURE_2D,
