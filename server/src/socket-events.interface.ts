@@ -11,8 +11,8 @@ export interface PlayerWithPosition {
 export interface ServerToClientEvents {
   playerMove: (data: PlayerWithPosition) => void;
   createUser: (data: {
-    player: Player;
-    otherPlayers: PlayerWithPosition[];
+    player: Player,
+    otherPlayers: PlayerWithPosition[]
   }) => void;
   playerJoined: (data: PlayerWithPosition) => void;
   playerDisconnected: (data: Player) => void;
