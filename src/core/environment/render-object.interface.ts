@@ -8,5 +8,7 @@ export interface RenderObject {
 
   translate(x: number, y: number, z: number): void;
 
+  setPosition(x: number, y: number, z: number): void;
+
   getCollision(): CollisionShape | undefined;
 }

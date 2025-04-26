@@ -11,4 +11,4 @@ const context = initWebGLContext(CANVAS_SELECTOR);
 
 const chessWorld = createChessWorld(context);
 
-startApp(context, chessWorld);
+startApp(context, chessWorld, 'ws://localhost:3000');

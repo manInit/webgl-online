@@ -28,6 +28,8 @@ export class World implements RenderObject {
     });
   }
 
+  setPosition(): void {}
+
   rotate(angle: number, x: number, y: number, z: number): void {
     this.objects.forEach((object) => {
       object.rotate(angle, x, y, z);

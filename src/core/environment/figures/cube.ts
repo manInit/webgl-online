@@ -139,6 +139,12 @@ export class Cube implements RenderObject {
     mat4.translate(this.modelMatrix, this.modelMatrix, newCenter);
   }
 
+  setPosition(x: number, y: number, z: number): void {
+    this.modelMatrix[12] = x;
+    this.modelMatrix[13] = y;
+    this.modelMatrix[14] = z;
+  }
+
   render(_: number, viewMatrix: mat4): void {
     const modelViewMatrix = mat4.create();
     mat4.multiply(modelViewMatrix, viewMatrix, this.modelMatrix);

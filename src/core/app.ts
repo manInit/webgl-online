@@ -4,10 +4,16 @@ import { checkCollision } from './collision/check-collision';
 import { WebGLContext } from './context/webgl-context.interface';
 import { createProjectionMatrix } from './create-projection-matrix';
 import { World } from './environment/world';
+import { ServerSocket } from './network/server-socket';
 
-export function startApp(context: WebGLContext, world: World): void {
+export function startApp(
+  context: WebGLContext,
+  world: World,
+  url: string,
+): void {
   const projectionMatrix = createProjectionMatrix(context);
   const camera = new Camera(context, true, false);
+  const serverSocket = new ServerSocket(url, context);
 
   context.gl.useProgram(context.program);
   context.gl.enable(context.gl.DEPTH_TEST);
@@ -37,17 +43,23 @@ export function startApp(context: WebGLContext, world: World): void {
     );
 
     const prevCameraPosition = vec3.clone(camera.currentPosition);
-    camera.checkUpdate();
+    const isUpdate = camera.checkUpdate();
     const isCollide = checkCollision(
       camera.getCollisionShape(),
       world.getObjects(),
     );
     if (isCollide) {
       camera.currentPosition = prevCameraPosition;
+    } else if (isUpdate) {
+      serverSocket.emitPlayerMove(camera.currentPosition);
     }
 
     const viewMatrix = camera.getViewMatrix();
     world.render(deltaTime, viewMatrix);
+
+    serverSocket.playersObject.forEach((p) => {
+      p.render(deltaTime, viewMatrix);
+    });
 
     start = timestamp;
     requestAnimationFrame(render);

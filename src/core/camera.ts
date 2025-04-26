@@ -109,19 +109,25 @@ export class Camera {
     );
   }
 
-  checkUpdate(): void {
+  checkUpdate(): boolean {
+    let isUpdate = false;
     if (this.pressedKeys.has(KEY_RIGHT)) {
       this.moveRightOrLeft(false);
+      isUpdate = true;
     }
     if (this.pressedKeys.has(KEY_LEFT)) {
       this.moveRightOrLeft(true);
+      isUpdate = true;
     }
     if (this.pressedKeys.has(KEY_FORWARD)) {
       this.moveForwardOrBackward(false);
+      isUpdate = true;
     }
     if (this.pressedKeys.has(KEY_BACKWARD)) {
       this.moveForwardOrBackward(true);
+      isUpdate = true;
     }
+    return isUpdate;
   }
 
   rotate(horizontalAngle: number, verticalAngle: number): void {
