@@ -1,19 +1,17 @@
 import express from 'express';
-import http from 'http';
+
 import { Server } from 'socket.io';
 import { randomUUID } from 'crypto';
 import { ClientToServerEvents, PlayerWithPosition, ServerToClientEvents } from './socket-events.interface';
-
-process.env.USER_ID;
+import { createServer } from './create-server';
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
     origin: '*'
   }
 });
-
 
 const playersState = new Map<string, PlayerWithPosition>();
 

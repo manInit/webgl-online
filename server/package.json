@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npx tsx --watch ./src/index.ts"
+    "start": "npx tsx --watch ./src/index.ts",
+    "dev": "npx tsx --env-file=.development.env --watch ./src/index.ts",
+    "prod": "npx tsx --env-file=.production.env --watch ./src/index.ts"
   },
   "keywords": [],
   "author": "",
