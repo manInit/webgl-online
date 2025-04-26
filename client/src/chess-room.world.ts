@@ -2,6 +2,7 @@ import { vec3 } from 'gl-matrix';
 import { Cube } from './core/environment/figures/cube';
 import { World } from './core/environment/world';
 import { WebGLContext } from './core/context/webgl-context.interface';
+import { TextObject } from './core/environment/figures/text-object';
 
 export function createChessWorld(context: WebGLContext): World {
   const chess: Cube[] = [];
@@ -71,5 +72,7 @@ export function createChessWorld(context: WebGLContext): World {
     vec3.fromValues(0, 0, 0.67),
   );
 
-  return new World([blueCube, ...chess, ...walls]);
+  const helloWorld = new TextObject(context, 'hello world');
+
+  return new World([blueCube, ...chess, ...walls, helloWorld]);
 }

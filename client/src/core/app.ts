@@ -5,12 +5,15 @@ import { WebGLContext } from './context/webgl-context.interface';
 import { createProjectionMatrix } from './create-projection-matrix';
 import { World } from './environment/world';
 import { ServerSocket } from './network/server-socket';
+import { Textures } from './textures/textures.class';
 
 export function startApp(
   context: WebGLContext,
   world: World,
   url: string,
 ): void {
+  Textures.createTextures(context);
+
   const projectionMatrix = createProjectionMatrix(context);
   const camera = new Camera(context, true, false);
   const serverSocket = new ServerSocket(url, context);

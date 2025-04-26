@@ -146,6 +146,8 @@ export class Cube implements RenderObject {
   }
 
   render(_: number, viewMatrix: mat4): void {
+    this.context.gl.uniform1i(this.context.uUseTextureLocation, 0);
+
     const modelViewMatrix = mat4.create();
     mat4.multiply(modelViewMatrix, viewMatrix, this.modelMatrix);
     this.context.gl.uniformMatrix4fv(

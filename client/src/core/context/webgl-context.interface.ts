@@ -4,6 +4,8 @@ export interface WebGLContext {
   readonly program: WebGLProgram;
   readonly colorAttributeLocation: number;
   readonly positionAttributeLocation: number;
+  readonly positionTextureLocation: number;
   readonly uModelViewMatrixLocation: WebGLUniformLocation;
   readonly uProjectionMatrixLocation: WebGLUniformLocation;
+  readonly uUseTextureLocation: WebGLUniformLocation;
 }
