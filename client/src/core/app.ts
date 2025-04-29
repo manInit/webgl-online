@@ -60,10 +60,10 @@ export function startApp(
     }
 
     const viewMatrix = camera.getViewMatrix();
-    world.render(deltaTime, viewMatrix);
+    world.render(viewMatrix);
 
     serverSocket.playersObject.forEach((p) => {
-      p.render(deltaTime, viewMatrix);
+      p.render(viewMatrix);
     });
 
     start = timestamp;

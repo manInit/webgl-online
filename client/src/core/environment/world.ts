@@ -36,9 +36,9 @@ export class World implements RenderObject {
     });
   }
 
-  render(deltaTime: number, viewMatrix: mat4): void {
+  render(viewMatrix: mat4): void {
     this.objects.forEach((object) => {
-      object.render(deltaTime, viewMatrix);
+      object.render(viewMatrix);
     });
   }
 }

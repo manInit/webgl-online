@@ -111,7 +111,7 @@ export class BillboardImage implements RenderObject {
     return;
   }
 
-  render(deltaTime: number, viewMatrix: mat4): void {
+  render(viewMatrix: mat4): void {
     this.context.gl.uniform1i(this.context.uUseTextureLocation, 1);
     this.context.gl.bindTexture(
       this.context.gl.TEXTURE_2D,
