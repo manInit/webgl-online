@@ -1,8 +1,9 @@
 import { vec3 } from 'gl-matrix';
-import { Cube } from './core/environment/figures/cube';
+import { Cube } from './core/environment/objects/cube';
 import { World } from './core/environment/world';
 import { WebGLContext } from './core/context/webgl-context.interface';
-import { TextObject } from './core/environment/figures/text-object';
+import { TextObject } from './core/environment/objects/text-object';
+import { BillboardImage } from './core/environment/objects/billboard-image';
 
 export function createChessWorld(context: WebGLContext): World {
   const chess: Cube[] = [];
@@ -67,12 +68,37 @@ export function createChessWorld(context: WebGLContext): World {
 
   const blueCube = new Cube(
     context,
-    vec3.fromValues(0, 2, -1),
+    vec3.fromValues(0, 2, -4),
     vec3.fromValues(1, 1, 1),
     vec3.fromValues(0, 0, 0.67),
   );
 
-  const helloWorld = new TextObject(context, 'hello world');
+  const helloWorld = new TextObject(
+    context,
+    'hello world',
+    vec3.fromValues(0, 1, 0),
+  );
+  const image = new BillboardImage(
+    context,
+    'character',
+    vec3.fromValues(4, 0, 3),
+    1 / 1.5,
+    3.19 / 1.5,
+  );
+  const chatBubble = new BillboardImage(
+    context,
+    'text-bubble',
+    vec3.fromValues(0, 0, -5),
+    1,
+    1,
+  );
 
-  return new World([blueCube, ...chess, ...walls, helloWorld]);
+  return new World([
+    blueCube,
+    ...chess,
+    ...walls,
+    helloWorld,
+    image,
+    chatBubble,
+  ]);
 }

@@ -1,7 +1,7 @@
 import { WebGLContext } from '../context/webgl-context.interface';
-import { createFontTexture } from '../fonts/create-font-texture';
+import { createFontTextureFromPng } from './create-texture-from-png';
 
-type TextureNames = 'fonts';
+export type TextureNames = 'fonts' | 'character' | 'text-bubble';
 
 export class Textures {
   static texturesMap = new Map<TextureNames, WebGLTexture>();
@@ -14,7 +14,19 @@ export class Textures {
   }
 
   static createTextures(context: WebGLContext): void {
-    const texture = createFontTexture(context);
-    Textures.texturesMap.set('fonts', texture);
+    const fontTexture = createFontTextureFromPng(context, 'public/font.png');
+    Textures.texturesMap.set('fonts', fontTexture);
+
+    const heroTexture = createFontTextureFromPng(
+      context,
+      'public/character.png',
+    );
+    Textures.texturesMap.set('character', heroTexture);
+
+    const textBubbleTexture = createFontTextureFromPng(
+      context,
+      'public/text-bubble.png',
+    );
+    Textures.texturesMap.set('text-bubble', textBubbleTexture);
   }
 }

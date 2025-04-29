@@ -22,6 +22,8 @@ export function startApp(
   context.gl.enable(context.gl.DEPTH_TEST);
   context.gl.enable(context.gl.CULL_FACE);
   context.gl.cullFace(context.gl.BACK);
+  context.gl.enable(context.gl.BLEND);
+  context.gl.blendFunc(context.gl.SRC_ALPHA, context.gl.ONE_MINUS_SRC_ALPHA);
 
   let start: number;
   function render(timestamp: number) {

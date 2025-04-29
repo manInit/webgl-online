@@ -14,7 +14,7 @@ export interface FontInfo {
 export const FONT_INFO: FontInfo = {
   letterHeight: 8,
   spaceWidth: 8,
-  spacing: -1,
+  spacing: 1,
   textureWidth: 64,
   textureHeight: 40,
   glyphInfos: {

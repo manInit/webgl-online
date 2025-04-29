@@ -1,8 +1,11 @@
 import { WebGLContext } from '../context/webgl-context.interface';
 
-export function createFontTexture(context: WebGLContext): WebGLTexture {
-  const glyphTexture = context.gl.createTexture();
-  context.gl.bindTexture(context.gl.TEXTURE_2D, glyphTexture);
+export function createFontTextureFromPng(
+  context: WebGLContext,
+  imagePath: string,
+): WebGLTexture {
+  const texture = context.gl.createTexture();
+  context.gl.bindTexture(context.gl.TEXTURE_2D, texture);
   context.gl.texImage2D(
     context.gl.TEXTURE_2D,
     0,
@@ -16,9 +19,9 @@ export function createFontTexture(context: WebGLContext): WebGLTexture {
   );
 
   const image = new Image();
-  image.src = 'public/font.png';
+  image.src = imagePath;
   image.addEventListener('load', () => {
-    context.gl.bindTexture(context.gl.TEXTURE_2D, glyphTexture);
+    context.gl.bindTexture(context.gl.TEXTURE_2D, texture);
     context.gl.pixelStorei(context.gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
     context.gl.texImage2D(
       context.gl.TEXTURE_2D,
@@ -51,5 +54,5 @@ export function createFontTexture(context: WebGLContext): WebGLTexture {
   });
   context.gl.bindTexture(context.gl.TEXTURE_2D, null);
 
-  return glyphTexture;
+  return texture;
 }

@@ -1,9 +1,11 @@
+/* eslint-disable prettier/prettier */
 import { mat4, vec3 } from 'gl-matrix';
 import { CollisionShape } from '../../collision/collision-shape.interface';
 import { RenderObject } from '../render-object.interface';
 import { FONT_INFO } from '../../fonts/font-info';
 import { WebGLContext } from '../../context/webgl-context.interface';
 import { Textures } from '../../textures/textures.class';
+import { gradToRad } from '../../utils/grad-to-rad';
 
 export class TextObject implements RenderObject {
   private readonly modelMatrix = mat4.create();
@@ -12,6 +14,12 @@ export class TextObject implements RenderObject {
 
   private readonly textureCoordsBuffer: WebGLBuffer;
 
+  private readonly scale = 0.01;
+
+  private readonly width: number;
+
+  private readonly height: number;
+
   get msgText(): string {
     return this.text;
   }
@@ -19,6 +27,7 @@ export class TextObject implements RenderObject {
   constructor(
     private readonly context: WebGLContext,
     private readonly text: string,
+    position: vec3,
   ) {
     const verticesCount = text.length * 6;
 
@@ -80,6 +89,9 @@ export class TextObject implements RenderObject {
       offset += 12;
     }
 
+    this.width = x;
+    this.height = FONT_INFO.letterHeight;
+
     this.positionBuffer = this.context.gl.createBuffer();
     this.context.gl.bindBuffer(
       this.context.gl.ARRAY_BUFFER,
@@ -105,7 +117,7 @@ export class TextObject implements RenderObject {
     mat4.translate(
       this.modelMatrix,
       this.modelMatrix,
-      vec3.fromValues(1, 2, 1),
+      position,
     );
     mat4.scale(
       this.modelMatrix,
@@ -114,16 +126,20 @@ export class TextObject implements RenderObject {
     );
   }
 
-  rotate(): void {
-    throw new Error('Method not implemented.');
+  rotate(angle: number, x: number, y: number, z: number): void {
+    const rad = gradToRad(angle);
+    mat4.rotate(this.modelMatrix, this.modelMatrix, rad, vec3.normalize(vec3.create(), [x, y, z]));
   }
 
-  translate(): void {
-    throw new Error('Method not implemented.');
+  translate(x: number, y: number, z: number): void {
+    const newCenter = vec3.fromValues(x / this.scale, y / this.scale, z / this.scale);
+    mat4.translate(this.modelMatrix, this.modelMatrix, newCenter);
   }
 
-  setPosition(): void {
-    throw new Error('Method not implemented.');
+  setPosition(x: number, y: number, z: number): void {
+    this.modelMatrix[12] = x;
+    this.modelMatrix[13] = y;
+    this.modelMatrix[14] = z;
   }
 
   getCollision(): CollisionShape | undefined {
@@ -137,8 +153,31 @@ export class TextObject implements RenderObject {
       Textures.getTexture('fonts'),
     );
 
+    const up = vec3.fromValues(0, 1, 0);
+    const invert = mat4.create();
+    mat4.invert(invert, viewMatrix);
+    const cameraDirection = vec3.fromValues(invert[2], 0, invert[10]);
+    vec3.normalize(cameraDirection, cameraDirection);
+    const right = vec3.create();
+    vec3.cross(right, up, cameraDirection);
+    vec3.normalize(right, right);
+
+    const rotationMatrix = mat4.create();
+    mat4.set(
+      rotationMatrix,
+      right[0], up[0], cameraDirection[0], 0,
+      right[1], up[1], cameraDirection[1], 0,
+      right[2], up[2], cameraDirection[2], 0,
+      0, 0, 0, 1
+    );
+
+    const finalModelMatrix = mat4.create();
+    mat4.multiply(finalModelMatrix, finalModelMatrix, this.modelMatrix);
+    mat4.multiply(finalModelMatrix, finalModelMatrix, rotationMatrix);
+    mat4.translate(finalModelMatrix, finalModelMatrix, vec3.fromValues(-this.width / 2, -this.height / 2, 0));
+    
     const modelViewMatrix = mat4.create();
-    mat4.multiply(modelViewMatrix, viewMatrix, this.modelMatrix);
+    mat4.multiply(modelViewMatrix, viewMatrix, finalModelMatrix);
     this.context.gl.uniformMatrix4fv(
       this.context.uModelViewMatrixLocation,
       false,

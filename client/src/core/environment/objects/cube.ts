@@ -16,7 +16,7 @@ export class Cube implements RenderObject {
 
   constructor(
     private readonly context: WebGLContext,
-    readonly startPosition: vec3,
+    startPosition: vec3,
     private readonly size: vec3,
     private readonly color: vec3,
   ) {
@@ -41,7 +41,7 @@ export class Cube implements RenderObject {
      halfWidth,  halfHeight, -halfDepth,
      -halfWidth,  halfHeight, -halfDepth,
     ]);
-    mat4.translate(this.modelMatrix, this.modelMatrix, this.startPosition);
+    mat4.translate(this.modelMatrix, this.modelMatrix, startPosition);
 
     this.context.gl.bufferData(
       this.context.gl.ARRAY_BUFFER,

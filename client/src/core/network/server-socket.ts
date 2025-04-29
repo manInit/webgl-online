@@ -6,7 +6,7 @@ import {
 } from './socket-events.interface';
 import { vec3 } from 'gl-matrix';
 import { RenderObject } from '../environment/render-object.interface';
-import { Cube } from '../environment/figures/cube';
+import { Cube } from '../environment/objects/cube';
 import { WebGLContext } from '../context/webgl-context.interface';
 
 export class ServerSocket {
