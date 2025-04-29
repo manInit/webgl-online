@@ -30,7 +30,7 @@ export function startApp(
     if (start === undefined) {
       start = timestamp;
     }
-    const deltaTime = timestamp - start;
+    // const deltaTime = timestamp - start;
 
     context.gl.viewport(
       0,
