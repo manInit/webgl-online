@@ -85,20 +85,6 @@ export function createChessWorld(context: WebGLContext): World {
     1 / 1.5,
     3.19 / 1.5,
   );
-  const chatBubble = new BillboardImage(
-    context,
-    'text-bubble',
-    vec3.fromValues(0, 0, -5),
-    1,
-    1,
-  );
 
-  return new World([
-    blueCube,
-    ...chess,
-    ...walls,
-    helloWorld,
-    image,
-    chatBubble,
-  ]);
+  return new World([blueCube, ...chess, ...walls, helloWorld, image]);
 }

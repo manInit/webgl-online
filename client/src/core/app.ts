@@ -6,16 +6,19 @@ import { createProjectionMatrix } from './create-projection-matrix';
 import { World } from './environment/world';
 import { ServerSocket } from './network/server-socket';
 import { Textures } from './textures/textures.class';
+import { GlobalSettings, RenderCallback, MutableState } from './app.interface';
 
 export function startApp(
   context: WebGLContext,
+  settings: GlobalSettings,
   world: World,
   url: string,
+  renderCallbacks: RenderCallback[],
 ): void {
   Textures.createTextures(context);
 
   const projectionMatrix = createProjectionMatrix(context);
-  const camera = new Camera(context, true, false);
+  const camera = new Camera(context, settings.cameraPosition, true, false);
   const serverSocket = new ServerSocket(url, context);
 
   context.gl.useProgram(context.program);
@@ -26,11 +29,14 @@ export function startApp(
   context.gl.blendFunc(context.gl.SRC_ALPHA, context.gl.ONE_MINUS_SRC_ALPHA);
 
   let start: number;
+  const mutableState: MutableState = {
+    controlsEnabled: true,
+  };
   function render(timestamp: number) {
     if (start === undefined) {
       start = timestamp;
     }
-    // const deltaTime = timestamp - start;
+    const deltaTime = timestamp - start;
 
     context.gl.viewport(
       0,
@@ -48,15 +54,17 @@ export function startApp(
     );
 
     const prevCameraPosition = vec3.clone(camera.currentPosition);
-    const isUpdate = camera.checkUpdate();
-    const isCollide = checkCollision(
-      camera.getCollisionShape(),
-      world.getObjects(),
-    );
-    if (isCollide) {
-      camera.currentPosition = prevCameraPosition;
-    } else if (isUpdate) {
-      serverSocket.emitPlayerMove(camera.currentPosition);
+    if (mutableState.controlsEnabled) {
+      const isUpdate = camera.checkUpdate(deltaTime);
+      const isCollide = checkCollision(
+        camera.getCollisionShape(),
+        world.getObjects(),
+      );
+      if (isCollide) {
+        camera.currentPosition = prevCameraPosition;
+      } else if (isUpdate) {
+        serverSocket.emitPlayerMove(camera.currentPosition);
+      }
     }
 
     const viewMatrix = camera.getViewMatrix();
@@ -65,6 +73,20 @@ export function startApp(
     serverSocket.playersObject.forEach((p) => {
       p.render(viewMatrix);
     });
+
+    const pos = camera.currentPosition;
+    const playerPos: [number, number, number] = [pos[0], pos[1], pos[2]];
+    renderCallbacks.forEach((cb) =>
+      cb({
+        viewMatrix,
+        world,
+        state: mutableState,
+        playerState: {
+          position: playerPos,
+          player: serverSocket.player,
+        },
+      }),
+    );
 
     start = timestamp;
     requestAnimationFrame(render);

@@ -7,7 +7,7 @@ import { gradToRad } from '../../utils/grad-to-rad';
 import { TextureNames, Textures } from '../../textures/textures.class';
 
 export class BillboardImage implements RenderObject {
-  private readonly modelMatrix = mat4.create();
+  readonly modelMatrix = mat4.create();
 
   private readonly positionBuffer: WebGLBuffer;
 

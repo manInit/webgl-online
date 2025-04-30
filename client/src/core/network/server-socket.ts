@@ -12,7 +12,7 @@ import { WebGLContext } from '../context/webgl-context.interface';
 export class ServerSocket {
   private readonly socket: Socket<ServerToClientEvents, ClientToServerEvents>;
 
-  private player: Player | undefined;
+  player: Player | undefined;
 
   private readonly anotherPlayers = new Map<
     string,

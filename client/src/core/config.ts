@@ -1,7 +1,7 @@
 export const FOV = 45;
 export const NEAR = 0.1;
 export const FAR = 100;
-export const SPEED_MOVE = 0.1;
+export const SPEED_MOVE = 0.01;
 export const MOUSE_SENSITIVITY = 0.07;
 
 export const KEY_FORWARD = 'KeyW';

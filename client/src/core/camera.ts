@@ -14,7 +14,7 @@ import { CollisionShape } from './collision/collision-shape.interface';
 export class Camera {
   private readonly viewMatrix = mat4.create();
 
-  private readonly position = vec3.fromValues(0, 1.73, 0);
+  private readonly position: vec3;
   private readonly pointToLook = vec3.fromValues(0, 0, -1);
   private readonly up = vec3.fromValues(0, 1, 0);
   private readonly collisionShapeSize = vec3.fromValues(0.5, 0.5, 0.5);
@@ -34,9 +34,11 @@ export class Camera {
 
   constructor(
     context: WebGLContext,
+    startPosition: vec3,
     withControls: boolean,
     private readonly freeMode: boolean,
   ) {
+    this.position = vec3.clone(startPosition);
     if (withControls) {
       document.addEventListener('keydown', (e) => this.pressedKeys.add(e.code));
       document.addEventListener('keyup', (e) =>
@@ -78,7 +80,7 @@ export class Camera {
     } satisfies CollisionShape;
   }
 
-  moveForwardOrBackward(back = false): void {
+  moveForwardOrBackward(back: boolean, deltaTime: number): void {
     let moveDirection: vec3;
     if (!this.freeMode) {
       moveDirection = vec3.clone(this.pointToLook);
@@ -92,11 +94,11 @@ export class Camera {
       this.position,
       this.position,
       moveDirection,
-      back ? -SPEED_MOVE : SPEED_MOVE,
+      back ? -SPEED_MOVE * deltaTime : SPEED_MOVE * deltaTime,
     );
   }
 
-  moveRightOrLeft(isRight = false): void {
+  moveRightOrLeft(isRight: boolean, deltaTime: number): void {
     const right = vec3.create();
     vec3.cross(right, this.pointToLook, this.up);
     vec3.normalize(right, right);
@@ -105,26 +107,26 @@ export class Camera {
       this.position,
       this.position,
       right,
-      isRight ? -SPEED_MOVE : SPEED_MOVE,
+      isRight ? -SPEED_MOVE * deltaTime : SPEED_MOVE * deltaTime,
     );
   }
 
-  checkUpdate(): boolean {
+  checkUpdate(deltaTime: number): boolean {
     let isUpdate = false;
     if (this.pressedKeys.has(KEY_RIGHT)) {
-      this.moveRightOrLeft(false);
+      this.moveRightOrLeft(false, deltaTime);
       isUpdate = true;
     }
     if (this.pressedKeys.has(KEY_LEFT)) {
-      this.moveRightOrLeft(true);
+      this.moveRightOrLeft(true, deltaTime);
       isUpdate = true;
     }
     if (this.pressedKeys.has(KEY_FORWARD)) {
-      this.moveForwardOrBackward(false);
+      this.moveForwardOrBackward(false, deltaTime);
       isUpdate = true;
     }
     if (this.pressedKeys.has(KEY_BACKWARD)) {
-      this.moveForwardOrBackward(true);
+      this.moveForwardOrBackward(true, deltaTime);
       isUpdate = true;
     }
     return isUpdate;

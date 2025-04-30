@@ -6,7 +6,7 @@ import { gradToRad } from '../../utils/grad-to-rad';
 import { CollisionShape } from '../../collision/collision-shape.interface';
 
 export class Cube implements RenderObject {
-  private readonly modelMatrix = mat4.create();
+  readonly modelMatrix = mat4.create();
 
   private readonly positionBuffer: WebGLBuffer;
 

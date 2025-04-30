@@ -8,7 +8,7 @@ import { Textures } from '../../textures/textures.class';
 import { gradToRad } from '../../utils/grad-to-rad';
 
 export class TextObject implements RenderObject {
-  private readonly modelMatrix = mat4.create();
+  readonly modelMatrix = mat4.create();
 
   private readonly positionBuffer: WebGLBuffer;
 

@@ -3,6 +3,8 @@ import { RenderObject } from './render-object.interface';
 import { CollisionShape } from '../collision/collision-shape.interface';
 
 export class World implements RenderObject {
+  readonly modelMatrix = mat4.create();
+
   constructor(private objects: RenderObject[]) {}
 
   getCollision(): CollisionShape | undefined {
