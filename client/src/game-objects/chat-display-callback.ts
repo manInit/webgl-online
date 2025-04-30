@@ -4,10 +4,10 @@ import { TextWindowManager } from './text-window-manager';
 import { RenderCallback } from '../core/app.interface';
 
 export const chatDisplayCallback: RenderCallback = ({
-  world,
+  socket,
   playerState: playerWithPosition,
 }): void => {
-  const bubbles = world.getObjects().filter((obj) => obj instanceof TextBubble);
+  const bubbles = socket.bubblesObject;
   if (bubbles.length === 0) {
     return;
   }

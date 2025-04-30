@@ -1,8 +1,6 @@
 import { vec3 } from 'gl-matrix';
-import { WebGLContext } from '../core/context/webgl-context.interface';
-import { World } from '../core/environment/world';
-import { TextBubble } from './text-bubble';
 import { MutableState, PlayerState } from '../core/app.interface';
+import { ServerSocket } from '../core/network/server-socket';
 
 const INPUT_CONTAINER_SELECTOR = '#input-container';
 const INPUT_SELECTOR = '#input-container input';
@@ -26,15 +24,12 @@ export class TextInputManager {
 
   playerState: PlayerState | null = null;
 
+  socket: ServerSocket | null = null;
+
   private listener = this.leaveTextEventListener.bind(this);
 
-  constructor(
-    private readonly context: WebGLContext,
-    private readonly world: World,
-  ) {}
-
   leaveTextEventListener(event: KeyboardEvent): void {
-    if (event.key !== 'Enter' || !this.playerState) {
+    if (event.key !== 'Enter' || !this.playerState || !this.socket) {
       return;
     }
 
@@ -42,13 +37,7 @@ export class TextInputManager {
 
     const textPos = vec3.clone(this.playerState.position);
     textPos[1] = 0;
-    const bubble = new TextBubble(
-      this.context,
-      textPos,
-      this.playerState.player?.name || '???',
-      text,
-    );
-    this.world.addObject(bubble);
+    this.socket.emitPlayerMessage(text, textPos);
     this.hide();
     INPUT_ELEMENT.value = '';
   }

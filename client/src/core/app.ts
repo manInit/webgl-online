@@ -73,6 +73,9 @@ export function startApp(
     serverSocket.playersObject.forEach((p) => {
       p.render(viewMatrix);
     });
+    serverSocket.bubblesObject.forEach((b) => {
+      b.render(viewMatrix);
+    });
 
     const pos = camera.currentPosition;
     const playerPos: [number, number, number] = [pos[0], pos[1], pos[2]];
@@ -85,6 +88,7 @@ export function startApp(
           position: playerPos,
           player: serverSocket.player,
         },
+        socket: serverSocket,
       }),
     );
 

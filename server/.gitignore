@@ -1,3 +1,4 @@
 node_modules
 .production.env
 .development.env
+data.db
