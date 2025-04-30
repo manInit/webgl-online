@@ -12,7 +12,7 @@ export class TextWindowManager {
   static textShown = false;
 
   static show(author: string, text: string): void {
-    if (TextWindowManager.textShown) {
+    if (TextWindowManager.textShown && text === TEXT_ELEMENT.textContent) {
       return;
     }
 

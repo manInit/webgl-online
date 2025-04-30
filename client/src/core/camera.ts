@@ -80,56 +80,45 @@ export class Camera {
     } satisfies CollisionShape;
   }
 
-  moveForwardOrBackward(back: boolean, deltaTime: number): void {
-    let moveDirection: vec3;
-    if (!this.freeMode) {
-      moveDirection = vec3.clone(this.pointToLook);
-      moveDirection[1] = 0;
-      vec3.normalize(moveDirection, moveDirection);
-    } else {
-      moveDirection = this.pointToLook;
-    }
-
-    vec3.scaleAndAdd(
-      this.position,
-      this.position,
-      moveDirection,
-      back ? -SPEED_MOVE * deltaTime : SPEED_MOVE * deltaTime,
-    );
-  }
-
-  moveRightOrLeft(isRight: boolean, deltaTime: number): void {
-    const right = vec3.create();
-    vec3.cross(right, this.pointToLook, this.up);
-    vec3.normalize(right, right);
-
-    vec3.scaleAndAdd(
-      this.position,
-      this.position,
-      right,
-      isRight ? -SPEED_MOVE * deltaTime : SPEED_MOVE * deltaTime,
-    );
-  }
-
   checkUpdate(deltaTime: number): boolean {
-    let isUpdate = false;
-    if (this.pressedKeys.has(KEY_RIGHT)) {
-      this.moveRightOrLeft(false, deltaTime);
-      isUpdate = true;
+    const move = vec3.create();
+    if (
+      this.pressedKeys.has(KEY_FORWARD) ||
+      this.pressedKeys.has(KEY_BACKWARD)
+    ) {
+      const forward = vec3.clone(this.pointToLook);
+      if (!this.freeMode) {
+        forward[1] = 0;
+      }
+      vec3.normalize(forward, forward);
+      if (this.pressedKeys.has(KEY_BACKWARD)) {
+        vec3.scale(forward, forward, -1);
+      }
+      vec3.add(move, move, forward);
     }
-    if (this.pressedKeys.has(KEY_LEFT)) {
-      this.moveRightOrLeft(true, deltaTime);
-      isUpdate = true;
+
+    if (this.pressedKeys.has(KEY_RIGHT) || this.pressedKeys.has(KEY_LEFT)) {
+      const right = vec3.create();
+      vec3.cross(right, this.pointToLook, this.up);
+      vec3.normalize(right, right);
+      if (this.pressedKeys.has(KEY_LEFT)) {
+        vec3.scale(right, right, -1);
+      }
+      vec3.add(move, move, right);
     }
-    if (this.pressedKeys.has(KEY_FORWARD)) {
-      this.moveForwardOrBackward(false, deltaTime);
-      isUpdate = true;
+
+    const len = vec3.length(move);
+    if (len > 0) {
+      vec3.normalize(move, move);
+      vec3.scaleAndAdd(
+        this.position,
+        this.position,
+        move,
+        SPEED_MOVE * deltaTime,
+      );
+      return true;
     }
-    if (this.pressedKeys.has(KEY_BACKWARD)) {
-      this.moveForwardOrBackward(true, deltaTime);
-      isUpdate = true;
-    }
-    return isUpdate;
+    return false;
   }
 
   rotate(horizontalAngle: number, verticalAngle: number): void {

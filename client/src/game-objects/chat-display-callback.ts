@@ -44,4 +44,11 @@ export const chatDisplayCallback: RenderCallback = ({
       nearestBubble.billboardImage.translate(0, -nearestBubble.SPEED, 0);
     }
   }
+  bubbles
+    .filter((b) => b !== nearestBubble)
+    .forEach((b) => {
+      if (b.billboardImage.modelMatrix[13] > 0) {
+        b.billboardImage.translate(0, -b.SPEED, 0);
+      }
+    });
 };
