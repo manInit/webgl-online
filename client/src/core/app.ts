@@ -8,6 +8,23 @@ import { ServerSocket } from './network/server-socket';
 import { Textures } from './textures/textures.class';
 import { GlobalSettings, RenderCallback, MutableState } from './app.interface';
 
+function useState() {
+  let mutableState: MutableState = {
+    controlsEnabled: true,
+  };
+
+  const getState = () => mutableState;
+
+  const setState = (s: MutableState) => {
+    mutableState = s;
+  };
+
+  return {
+    getState,
+    setState,
+  };
+}
+
 export function startApp(
   context: WebGLContext,
   settings: GlobalSettings,
@@ -29,9 +46,7 @@ export function startApp(
   context.gl.blendFunc(context.gl.SRC_ALPHA, context.gl.ONE_MINUS_SRC_ALPHA);
 
   let start: number;
-  const mutableState: MutableState = {
-    controlsEnabled: true,
-  };
+  const { getState, setState } = useState();
   function render(timestamp: number) {
     if (start === undefined) {
       start = timestamp;
@@ -54,9 +69,7 @@ export function startApp(
     );
 
     const prevCameraPosition = vec3.clone(camera.currentPosition);
-    console.log(mutableState);
-
-    if (mutableState.controlsEnabled) {
+    if (getState().controlsEnabled) {
       const isUpdate = camera.checkUpdate(deltaTime);
       const isCollide = checkCollision(
         camera.getCollisionShape(),
@@ -85,12 +98,13 @@ export function startApp(
       cb({
         viewMatrix,
         world,
-        state: mutableState,
+        state: getState(),
         playerState: {
           position: playerPos,
           player: serverSocket.player,
         },
         socket: serverSocket,
+        setState,
       }),
     );
 

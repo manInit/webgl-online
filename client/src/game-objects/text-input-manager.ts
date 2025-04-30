@@ -20,7 +20,7 @@ INPUT_ELEMENT.addEventListener('keypress', (event) => {
 export class TextInputManager {
   private isVisible = false;
 
-  state: MutableState | null = null;
+  setState: ((s: MutableState) => void) | null = null;
 
   playerState: PlayerState | null = null;
 
@@ -43,7 +43,7 @@ export class TextInputManager {
   }
 
   show(event?: KeyboardEvent): void {
-    if (this.isVisible || !this.state) {
+    if (this.isVisible || !this.setState) {
       return;
     }
 
@@ -51,21 +51,24 @@ export class TextInputManager {
     INPUT_CONTAINER_ELEMENT.style.display = 'block';
     INPUT_ELEMENT.focus();
     this.isVisible = true;
-    this.state.controlsEnabled = false;
-    console.log(this.state);
+    this.setState({
+      controlsEnabled: false,
+    });
 
     INPUT_ELEMENT.addEventListener('keyup', this.listener);
   }
 
   hide(event?: KeyboardEvent): void {
-    if (!this.isVisible || !this.state) {
+    if (!this.isVisible || !this.setState) {
       return;
     }
 
     event?.preventDefault();
     INPUT_CONTAINER_ELEMENT.style.display = '';
     this.isVisible = false;
-    this.state.controlsEnabled = true;
+    this.setState({
+      controlsEnabled: true,
+    });
     INPUT_ELEMENT.removeEventListener('keyup', this.listener);
   }
 

@@ -8,7 +8,7 @@ export interface GlobalSettings {
 }
 
 export interface MutableState {
-  controlsEnabled: boolean;
+  readonly controlsEnabled: boolean;
 }
 
 export interface PlayerState {
@@ -17,11 +17,12 @@ export interface PlayerState {
 }
 
 export interface RenderCallbackParams {
-  viewMatrix: mat4;
-  playerState: PlayerState;
-  world: World;
-  state: MutableState;
-  socket: ServerSocket;
+  readonly viewMatrix: mat4;
+  readonly playerState: PlayerState;
+  readonly world: World;
+  readonly state: MutableState;
+  readonly setState: (state: MutableState) => void;
+  readonly socket: ServerSocket;
 }
 
 export type RenderCallback = (params: RenderCallbackParams) => void;
