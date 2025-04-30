@@ -20,7 +20,7 @@ const globalSettings: GlobalSettings = {
   cameraPosition: vec3.fromValues(0, 1.73, 0),
 };
 
-const manager = new TextInputManager(context, chessWorld);
+const manager = new TextInputManager();
 manager.listenKeyPress('KeyT', 'ControlLeft');
 
 startApp(context, globalSettings, chessWorld, import.meta.env.VITE_SERVER_URL, [
