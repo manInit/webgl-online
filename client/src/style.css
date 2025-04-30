@@ -1,7 +1,7 @@
 @font-face {
   font-family: "yoster";
   src:
-    url("public/yoster.ttf") format("TrueType"),
+    url("/assets/yoster.ttf") format("TrueType"),
 }
 
 body {
