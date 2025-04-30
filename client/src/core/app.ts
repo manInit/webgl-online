@@ -54,6 +54,8 @@ export function startApp(
     );
 
     const prevCameraPosition = vec3.clone(camera.currentPosition);
+    console.log(mutableState);
+
     if (mutableState.controlsEnabled) {
       const isUpdate = camera.checkUpdate(deltaTime);
       const isCollide = checkCollision(

@@ -52,6 +52,7 @@ export class TextInputManager {
     INPUT_ELEMENT.focus();
     this.isVisible = true;
     this.state.controlsEnabled = false;
+    console.log(this.state);
 
     INPUT_ELEMENT.addEventListener('keyup', this.listener);
   }
